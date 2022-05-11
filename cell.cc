@@ -1,3 +1,4 @@
+#include <sstream>
 #include "cell.hpp"
 #include "common.hpp"
 
