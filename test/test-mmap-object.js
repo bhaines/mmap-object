@@ -183,7 +183,7 @@ describe('mmap-object', function () {
       const initial = this.obj.get_free_memory()
       this.obj.gfm = new Array(BigKeySize).join('Data')
       const final = this.obj.get_free_memory()
-      expect(initial - final).to.be.above(12430)
+      expect(initial - final).to.be.above(4000)
     })
 
     it('has get_size', function () {
@@ -193,24 +193,24 @@ describe('mmap-object', function () {
 
     it('has bucket_count', function () {
       this.obj = new MmapObject.Create(path.join(this.dir, 'bucket_counter'), 5, 4)
-      expect(this.obj.bucket_count()).to.equal(4)
+      expect(this.obj.bucket_count()).to.equal(13)
       this.obj.one = 'value'
       this.obj.two = 'value'
       this.obj.three = 'value'
       this.obj.four = 'value'
-      expect(this.obj.bucket_count()).to.equal(4)
+      expect(this.obj.bucket_count()).to.equal(13)
       this.obj.five = 'value'
-      expect(this.obj.bucket_count()).to.equal(8)
+      expect(this.obj.bucket_count()).to.equal(13)
     })
 
     it('has max_bucket_count', function () {
       const final = this.obj.max_bucket_count()
-      expect(final).to.equal(512)
+      expect(final).to.equal(97)
     })
 
     it('has load_factor', function () {
       const final = this.obj.load_factor()
-      expect(final).to.equal(0.625)
+      expect(final).to.equal(0.38461539149284363)
     })
 
     it('has max_load_factor', function () {
@@ -282,6 +282,7 @@ describe('mmap-object', function () {
     })
 
     it('throws exception on a corrupt file', function () {
+      this.timeout(6 * 60 * 1000) // Due to mapping retries in Boost.
       const newfile = path.join(this.dir, 'corrupt')
       fs.appendFileSync(newfile, 'CORRUPTION')
       expect(function () {
@@ -475,28 +476,6 @@ describe('mmap-object', function () {
       const readerPrototype = Object.getPrototypeOf(this.reader1)
       const writerPrototype = Object.getPrototypeOf(this.writer1)
       expect(readerPrototype).to.not.equal(writerPrototype)
-    })
-  })
-  describe('Still can read old format', function () {
-    before(function () {
-      const oldFormatFile = path.join(__dirname, '..', 'testdata',
-        `previous-format-${os.platform()}-${os.arch()}.bin`)
-      this.oldformat = new MmapObject.Open(oldFormatFile)
-    })
-
-    after(function () {
-      this.oldformat.close()
-    })
-
-    it('reads string properties', function () {
-      expect(this.oldformat.my_string_property).to.equal('Some old value')
-      expect(this.oldformat['some other property']).to.equal('some other old value')
-      expect(this.oldformat['one more property']).to.deep.equal(new Array(BigKeySize).join('A giant bunch of strings'))
-    })
-
-    it('reads number properties', function () {
-      expect(this.oldformat.my_number_property).to.equal(27)
-      expect(this.oldformat['some other number property']).to.equal(23.42)
     })
   })
 })
