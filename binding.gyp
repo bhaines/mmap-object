@@ -5,38 +5,38 @@
       "-Werror",
       "-O3",
       "-fexceptions",  # Boost on Linux wants this
-      "-frtti"         # And this too.
+      "-frtti",        # And this too.
+      "-Wno-cast-function-type"
     ],
     "include_dirs": [
       "/usr/local/include",
       "<!(node -e \"require('nan')\")"
     ],
-    "libraries": [], # 
+    "libraries": [], #
     "OTHER_CFLAGS": [  # for Mac builds
       "-Wno-unused-local-typedefs"
     ]
   },
   "conditions": [
-      [
-        "OS=='win'", {
-          "variables": {
-            "include_dirs": [
-              "<!(echo %BOOST_ROOT%)"
-            ]
-          }
+    [
+      "OS=='win'", {
+        "variables": {
+          "include_dirs": [
+            "<!(echo %BOOST_ROOT%)"
+          ]
         }
-      ],
-      [
-        "OS=='linux'", {
-          "variables": {
-            "libraries": [
-              "-lrt"
-            ]
-          }
-        }
-      ],
-      
+      }
     ],
+    [
+      "OS=='linux'", {
+        "variables": {
+          "libraries": [
+            "-lrt"
+          ]
+        }
+      }
+    ],
+  ],
   "targets": [
     {
       "target_name": "<(module_name)",

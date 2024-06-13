@@ -190,13 +190,13 @@ NAN_PROPERTY_SETTER(SharedMap::PropSetter) {
           self->property_map->insert({ *string_key, *c });
         }
         break;
-      } catch(length_error) {
+      } catch(length_error&) {
         self->grow(data_length * 2);
-      } catch(bip::bad_alloc) {
+      } catch(bip::bad_alloc&) {
         self->grow(data_length * 2);
       }
     }
-  } catch(FileTooLarge) {
+  } catch(FileTooLarge&) {
     Nan::ThrowError("File grew too large.");
   }
   info.GetReturnValue().Set(value);
