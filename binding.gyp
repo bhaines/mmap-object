@@ -5,7 +5,8 @@
       "-Werror",
       "-O3",
       "-fexceptions",  # Boost on Linux wants this
-      "-frtti"         # And this too.
+      "-frtti",         # And this too.
+      "-Wno-cast-function-type"
     ],
     "include_dirs": [
       "/usr/local/include",
